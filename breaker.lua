@@ -11,13 +11,9 @@ local states = {
 }
 
 
-function CircuitBreaker:__new(settings, print_function) -- luacheck: ignore 561
-    if print_function then
-        debug_log = print_function
-    else
-        debug_log = kong.log.debug
-    end
-	settings = settings or {}
+function CircuitBreaker:__new(settings) -- luacheck: ignore 561
+	debug_log = settings.notify
+    settings = settings or {}
 	local expiry = (settings.now or os.time)() + settings.interval
 
 	return {
@@ -42,8 +38,7 @@ function CircuitBreaker:__new(settings, print_function) -- luacheck: ignore 561
 		_error = settings.error or function(err) return nil, err end,
 		_rethrow = settings.rethrow or error,
 		_now = settings.now or os.time,
-		_notify = settings.notify or function()
-			end,
+		_notify = settings.notify,
 		_state = states.closed,
 		_counters = Counters(),
 		_generation = 0,

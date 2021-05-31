@@ -1,4 +1,4 @@
-local function prepare_breaker_settings(conf, name)
+local function prepare_breaker_settings(conf, name, print_function)
 	return {
 		interval = conf.window_time, -- expiry_time of a bucket
 		half_open_timeout = conf.wait_duration_in_half_open_state,
@@ -8,7 +8,7 @@ local function prepare_breaker_settings(conf, name)
 		half_open_min_calls_in_window = conf.half_open_min_calls_in_window,
 		half_open_max_calls_in_window = conf.half_open_max_calls_in_window,
         now = conf.now,
-        notify = conf.notify,
+        notify = conf.notify or function() end,
         name = name or ""
 	}
 end
