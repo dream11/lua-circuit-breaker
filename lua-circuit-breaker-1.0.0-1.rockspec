@@ -1,4 +1,4 @@
-package = "host-interpolate-by-header"
+package = "lua-circuit-breaker"
 
 version = "1.0.0-1"
 
