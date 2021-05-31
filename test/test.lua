@@ -1,7 +1,7 @@
 local circuit_breaker_lib = require "lua-circuit-breaker.factory"
 local breaker = require "lua-circuit-breaker.breaker"
 local cb_errors = require "lua-circuit-breaker.errors"
-local mocks = require "lua-circuit-breaker/test/mocks"
+local mocks = require "test.mocks"
 
 describe("lua-circuit-breaker", function()
     local circuit_breakers
