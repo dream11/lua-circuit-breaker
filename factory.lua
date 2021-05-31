@@ -30,7 +30,7 @@ function Breaker_factory:remove_breakers_by_level (level)
    return true
 end
 
-function Breaker_factory:get_circuit_breaker (level, name, conf, print_function)
+function Breaker_factory:get_circuit_breaker (level, name, conf)
 
    local level_not_exists = self:check_level(level)
    if level_not_exists or (conf.version and conf.version > self.version) then
@@ -39,7 +39,7 @@ function Breaker_factory:get_circuit_breaker (level, name, conf, print_function)
    end
 
    if self[level][name] == nil then
-		self[level][name] = breaker.new(prepare_breaker_settings(conf, name), print_function)
+		self[level][name] = breaker.new(prepare_breaker_settings(conf, name))
    end
 	return self[level][name], nil
 end

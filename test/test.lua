@@ -16,7 +16,7 @@ describe("lua-circuit-breaker", function()
     local cb_conf
 
     local get_cb = function (conf, level, name)
-        return circuit_breakers:get_circuit_breaker(level, name, conf, function () end)
+        return circuit_breakers:get_circuit_breaker(level, name, conf)
     end
     local before_cb_assert = function(conf, err_cb_expected)
         local cb = get_cb(conf, "global", "GET/test")
@@ -46,7 +46,8 @@ describe("lua-circuit-breaker", function()
             half_open_max_calls_in_window = half_open_max_calls_in_window,
             half_open_min_calls_in_window = half_open_min_calls_in_window,
             version = 1,
-            now = clock
+            now = clock,
+            notify = print,
         }
     end)
 
