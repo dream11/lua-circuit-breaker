@@ -31,6 +31,8 @@ jobs:
 
       - name: Install luarocks and busted
         uses: leafo/gh-actions-luarocks@v3.7.0
+      
+      - name: Install busted
         run: |
           luarocks install busted
 
