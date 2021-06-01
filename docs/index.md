@@ -1,7 +1,7 @@
 ![Continuous Integration](https://github.com/dream11/lua-circuit-breaker/workflows/Continuous%20Integration/badge.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 # lua-circuit-breaker
-![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 ## Overview
 
