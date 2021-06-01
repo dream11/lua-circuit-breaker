@@ -1,7 +1,7 @@
+![lua-circuit-breaker](./docs/lua-circuit-breaker.svg)
+
 [![Test](https://github.com/dream11/lua-circuit-breaker/actions/workflows/ci.yml/badge.svg)](https://github.com/dream11/lua-circuit-breaker/actions/workflows/ci.yml)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-
-# lua-circuit-breaker
 
 ## Overview
 
@@ -33,36 +33,68 @@ Clone this repo and run:
 local circuit_breaker_lib = require "lua-circuit-breaker.factory"
 
 --Create a new instance of the circuit breaker factory. Always set version=0. This is used to flush the circuit breakers when the configuration is changed.
-local circuit_breakers = circuit_breaker_lib:new({version = 0})
+local circuit_breakers = circuit_breaker_lib:new()
 
--- Get a circuit breaker instance from factory. Returns a new instance only if not already created .
+-- Get a circuit breaker instance from factory. Returns a new instance only if not already created.
+local settings = {  
+    window_time = 10,
+    min_calls_in_window= 20,
+    failure_percent_threshold= 51,
+    wait_duration_in_open_state= 15,
+    wait_duration_in_half_open_state= 120,
+    half_open_max_calls_in_window= 10,
+    half_open_min_calls_in_window= 5,
+    version = 1,
+    notify = function(state)
+        print(string.format("Breaker %s state changed to: %s", state._state))
+    end,
+}
 local cb, err = circuit_breakers:get_circuit_breaker( 
-    level, -- Level is used to group certain CB objects into one.      
     name, -- Name of circuit breaker. This should be unique.
-    {  
-        window_time = 10, -- Time window in seconds after which the state of the cb is reset
-        min_calls_in_window= 20, -- The minimum number of requests in a window that go through the cb after which the breaking strategy is applied
-        failure_percent_threshold= 51, -- Failure % threshold after which the cb opens from closed or half open state
-        wait_duration_in_open_state= 15, -- Time in seconds for which the cb remains in open state before transitioning to half open state
-        wait_duration_in_half_open_state= 120, -- Time in seconds for which the cb remains in half open state
-        half_open_max_calls_in_window= 10, -- Maximum calls in half open state after which **too_many_requests** error is returned.
-        half_open_min_calls_in_window= 5, -- Minimum calls in half open state after which the calculation to open/close the circuit is done in half open state.
-        version = 1, -- Version is used to flush the cbs if the configuration is changed.
-        notify = function(state) -- Print a log when the state of cb changes.
-            print(string.format("Breaker %s state changed to: %s", state._state))
-        end
-    }
+    group, -- Used to group certain CB objects into one.      
+    settings,
 )
+
 -- Check state of cb. This function returns an error if the state is open or half_open_max_calls_in_window is breached.
 local _, err_cb = cb:_before() 
 if err_cb then
     return false, "Circuit breaker open error"
 end
+local generation = cb._generation
  
 -- Make the http call for which circuit breaking is required.
 local res, err_http = makeHttpCall()
 
 -- Update the state of the cb based on successfull / failure response.
 local ok = res and res.status and res.status < 500
-cb:_after(cb._generation, ok) -- generation is used to update the counter in the correct time window.
+cb:_after(generation, ok) -- generation is used to update the counter in the correct time bucket.
 ```
+
+
+### Parameters
+
+| Parameter | Type  | Required | description |
+| --- | --- | --- | --- |
+| `name` | string | true | Name of circuit breaker, this should be unique |
+| `group` | string | false | Group to which the CB object will belong |
+| `settings.version` | number | true | Maintains version of settings object, changing this will create new CB and flush older CB |
+| `settings.window_time` | number | true | Window size in seconds |
+| `settings.min_calls_in_window` | number | true | Minimum number of calls to be present in the window to start calculation |
+| `settings.failure_percent_threshold` | number | true | % of requests that should fail to open the circuit |
+| `settings.wait_duration_in_open_state` | number | true | Duration to wait in seconds before again transitioning to half-open state |
+| `settings.wait_duration_in_half_open_state` | number | true | Duration to wait in seconds in half-open state before automatically transitioning to closed state |
+| `settings.half_open_max_calls_in_window` | number | true | Maximum calls to allow in half open state |
+| `settings.half_open_min_calls_in_window` | number | true | Minimum number of calls to be present in the half open state to start calculation |
+| `settings.notify` | function | false | Overrides with a custom logger function |
+| `settings.half_open_to_open` | function | false | Overrides transtition from half-open to open state |
+| `settings.half_open_to_close` | function | false | Overrides transtition from half-open to closed state |
+| `settings.closed_to_open` | function | false | Overrides transtition from closed to open state |
+
+
+## Available Methods
+
+1. new() : create a new circuit breaker factory
+2. get_circuit_breaker(name, group, settings) : create a new CB object 
+3. check_group(group) : check if this group is present
+4. remove_breakers_by_group(group) : remove all CB objects in this group
+5. remove_circuit_breaker(name, group) : remove a particular CB inside a group
