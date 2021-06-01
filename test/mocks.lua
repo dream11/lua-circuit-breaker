@@ -4,7 +4,7 @@ local Clock = oop.class()
 
 function Clock:__new(time)
     return {
-        _time = time or 1,
+        _time = time or 1
     }
 end
 

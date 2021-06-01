@@ -1,75 +1,44 @@
-name-template: 'Release v$RESOLVED_VERSION 🌈'
-tag-template: 'v$RESOLVED_VERSION'
 template: |
   ## Changes
   $CHANGES
-
-categories:
-  - title: '🚀 Features'
-    labels:
-      - 'feature'
-  - title: 'Improvements'
-    labels:
-      - 'enhancement'
-  - title: 'Tests'
-    labels:
-      - 'test'
-  - title: '🐛 Bug Fixes'
-    labels:
-      - 'fix'
-      - 'bug'
-      - 'hotfix'
-      - 'revert'
-  - title: '🧰 Maintenance'
-    labels:
-      - 'docs'
-      - 'chore'
-      - 'build'
-      - 'ci'
-
-version-resolver:
-  major:
-    labels:
-      - 'breaking'
-  minor:
-    labels:
-      - 'feature'
-      - 'enhancement'
-  patch:
-    labels:
-      - 'fix'
-      - 'test'
-      - 'hotfix'
 
 exclude-labels:
   - 'skip-changelog'
 
 autolabeler:
-  - label: 'chore'
+  - label: 'enhancement'
     branch:
-      - '/chore\/.+/'
       - '/refactor\/.+/'
       - '/perf\/.+/'
+  - label: 'feature'
+    branch:
+      - '/feat\/.+/'
   - label: 'fix'
     branch:
       - '/fix\/.+/'
     title:
       - '/fix/i'
-  - label: 'feature'
-    branch:
-      - '/feat\/.+/'
-  - label: 'docs'
-     files:
+  - label: 'maintenance'
+    files:
       - '*.md'
       - '*.txt'
       - '*.png'
+      - '*.yml'
+    title:
+      - '/chore/i'
+      - '/docs/i'
     branch:
+      - '/chore\/.+/'
       - '/docs\/.+/'
+  - label: 'ci'
+    files:
+      - '.github/*'
   - label: 'test'
     branch:
       - '/test\/.+/'
-  - label: 'ci'
-    files:
-      - '*.yml'
+  - label: 'hotfix'
     branch:
-      - '/ci\/.+/'
+      - '/hotfix\/.+/'
+  - label: 'lua-code-changed'
+    files:
+      - '*.lua'

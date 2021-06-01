@@ -1,7 +1,7 @@
 ![Continuous Integration](https://github.com/dream11/lua-circuit-breaker/workflows/Continuous%20Integration/badge.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 # lua-circuit-breaker
-![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 ## Overview
 
@@ -66,5 +66,3 @@ local res, err_http = makeHttpCall()
 local ok = res and res.status and res.status < 500
 cb:_after(cb._generation, ok) -- generation is used to update the counter in the correct time window.
 ```
-
-## Intricacies
