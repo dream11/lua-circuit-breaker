@@ -1,7 +1,7 @@
+![lua-circuit-breaker](./docs/lua-circuit-breaker.svg)
+
 [![Test](https://github.com/dream11/lua-circuit-breaker/actions/workflows/ci.yml/badge.svg)](https://github.com/dream11/lua-circuit-breaker/actions/workflows/ci.yml)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-
-# lua-circuit-breaker
 
 ## Overview
 
@@ -50,7 +50,7 @@ local cb, err = circuit_breakers:get_circuit_breaker(
         version = 1, -- Version is used to flush the cbs if the configuration is changed.
         notify = function(state) -- Print a log when the state of cb changes.
             print(string.format("Breaker %s state changed to: %s", state._state))
-        end
+        end,
     }
 )
 -- Check state of cb. This function returns an error if the state is open or half_open_max_calls_in_window is breached.
