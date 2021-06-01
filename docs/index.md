@@ -66,5 +66,3 @@ local res, err_http = makeHttpCall()
 local ok = res and res.status and res.status < 500
 cb:_after(cb._generation, ok) -- generation is used to update the counter in the correct time window.
 ```
-
-## Intricacies

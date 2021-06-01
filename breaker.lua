@@ -10,10 +10,9 @@ local states = {
 	half_open = "half_open"
 }
 
-
 function CircuitBreaker:__new(settings) -- luacheck: ignore 561
 	debug_log = settings.notify
-    settings = settings or {}
+	settings = settings or {}
 	local expiry = (settings.now or os.time)() + settings.interval
 
 	return {
@@ -22,20 +21,27 @@ function CircuitBreaker:__new(settings) -- luacheck: ignore 561
 		_open_timeout = settings.open_timeout or 60,
 		_interval = settings.interval or 0,
 		_min_calls_in_window = settings.min_calls_in_window,
-		_closed_to_open = settings._closed_to_open or function(counters)
-			return counters:total_samples() >= settings.min_calls_in_window and
-				(counters.total_failures / counters:total_samples()) * 100 >= settings.failure_percent_threshold
-		end,
-		_half_open_to_close = settings._half_open_to_close or function(counters)
-			return counters:total_samples() >= settings.half_open_min_calls_in_window and
-				(counters.total_failures / counters:total_samples()) * 100 < settings.failure_percent_threshold
-		end,
-		_half_open_to_open = settings._half_open_to_open or function(counters)
-			return counters:total_samples() >= settings.half_open_min_calls_in_window and
-				(counters.total_failures / counters:total_samples()) * 100 >= settings.failure_percent_threshold
-		end,
-		_is_successful = settings.is_successful or function(val) return val end,
-		_error = settings.error or function(err) return nil, err end,
+		_closed_to_open = settings._closed_to_open or
+			function(counters)
+				return counters:total_samples() >= settings.min_calls_in_window and
+					(counters.total_failures / counters:total_samples()) * 100 >= settings.failure_percent_threshold
+			end,
+		_half_open_to_close = settings._half_open_to_close or
+			function(counters)
+				return counters:total_samples() >= settings.half_open_min_calls_in_window and
+					(counters.total_failures / counters:total_samples()) * 100 < settings.failure_percent_threshold
+			end,
+		_half_open_to_open = settings._half_open_to_open or
+			function(counters)
+				return counters:total_samples() >= settings.half_open_min_calls_in_window and
+					(counters.total_failures / counters:total_samples()) * 100 >= settings.failure_percent_threshold
+			end,
+		_is_successful = settings.is_successful or function(val)
+				return val
+			end,
+		_error = settings.error or function(err)
+				return nil, err
+			end,
 		_rethrow = settings.rethrow or error,
 		_now = settings.now or os.time,
 		_notify = settings.notify,
@@ -150,5 +156,5 @@ end
 
 return {
 	new = CircuitBreaker,
-	states = states,
+	states = states
 }
