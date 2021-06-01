@@ -1,0 +1,19 @@
+# This workflow broadly does the below tasks-
+# (1) Auto Label PR's
+
+name: Add label to Pull Request
+
+on:
+  # pull_request event is required only for autolabeler
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  autolabeler:
+    runs-on: ubuntu-latest
+
+    steps:
+      - id: release-drafter
+        uses: release-drafter/release-drafter@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
