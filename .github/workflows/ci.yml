@@ -25,12 +25,12 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Install lua
-        - uses: leafo/gh-actions-lua@v8.0.0
+        uses: leafo/gh-actions-lua@v8.0.0
         with:
           luaVersion: "5.1.5"
 
       - name: Install luarocks and busted
-        - uses: leafo/gh-actions-luarocks@v3.7.0
+        uses: leafo/gh-actions-luarocks@v3.7.0
         run: |
           luarocks install busted
 
