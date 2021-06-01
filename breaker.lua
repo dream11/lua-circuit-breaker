@@ -21,17 +21,17 @@ function CircuitBreaker:__new(settings) -- luacheck: ignore 561
 		_open_timeout = settings.open_timeout or 60,
 		_interval = settings.interval or 0,
 		_min_calls_in_window = settings.min_calls_in_window,
-		_closed_to_open = settings._closed_to_open or
+		_closed_to_open = settings.closed_to_open or
 			function(counters)
 				return counters:total_samples() >= settings.min_calls_in_window and
 					(counters.total_failures / counters:total_samples()) * 100 >= settings.failure_percent_threshold
 			end,
-		_half_open_to_close = settings._half_open_to_close or
+		_half_open_to_close = settings.half_open_to_close or
 			function(counters)
 				return counters:total_samples() >= settings.half_open_min_calls_in_window and
 					(counters.total_failures / counters:total_samples()) * 100 < settings.failure_percent_threshold
 			end,
-		_half_open_to_open = settings._half_open_to_open or
+		_half_open_to_open = settings.half_open_to_open or
 			function(counters)
 				return counters:total_samples() >= settings.half_open_min_calls_in_window and
 					(counters.total_failures / counters:total_samples()) * 100 >= settings.failure_percent_threshold
@@ -49,7 +49,8 @@ function CircuitBreaker:__new(settings) -- luacheck: ignore 561
 		_counters = Counters(),
 		_generation = 0,
 		_expiry = expiry,
-		_last_state_notified = true
+		_last_state_notified = true,
+		_version = settings.version,
 	}
 end
 

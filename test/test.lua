@@ -17,18 +17,18 @@ describe(
         local clock = mocks.Clock()
         local cb_conf
 
-        local get_cb = function(conf, level, name)
-            return circuit_breakers:get_circuit_breaker(level, name, conf)
+        local get_cb = function(name, group, conf)
+            return circuit_breakers:get_circuit_breaker(name, group, conf)
         end
         local before_cb_assert = function(conf, err_cb_expected)
-            local cb = get_cb(conf, "global", "GET/test")
+            local cb = get_cb("GET/test", "global", conf)
             local _, err_cb = cb:_before()
             assert.are.same(err_cb_expected, err_cb)
             return cb
         end
 
         local check_and_assert_cb = function(conf, err_cb_expected, ok, breaker_state_expected)
-            local cb = get_cb(conf, "global", "GET/test")
+            local cb = get_cb("GET/test", "global", conf)
             local _, err_cb = cb:_before()
             assert.are.same(err_cb_expected, err_cb)
             assert.are.same(breaker_state_expected, cb._state)
@@ -38,7 +38,7 @@ describe(
 
         before_each(
             function()
-                circuit_breakers = circuit_breaker_lib:new({version = 0})
+                circuit_breakers = circuit_breaker_lib:new()
 
                 cb_conf = {
                     min_calls_in_window = min_calls_in_window,
@@ -168,7 +168,7 @@ describe(
                 end
                 cb_conf.version = cb_conf.version + 1
                 local cb = check_and_assert_cb(cb_conf, nil, true, breaker.states.closed)
-                assert.are.same(cb_conf.version, circuit_breakers.version)
+                assert.are.same(cb_conf.version, cb._version)
                 assert.are.same(1, cb._counters.requests)
             end
         )

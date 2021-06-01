@@ -1,7 +1,20 @@
 local breaker = require "breaker"
-local prepare_breaker_settings = require "utils".prepare_breaker_settings
+local utils = require "utils"
 
--- Meta class
+--[[ 
+  Structure of Breaker_factory object will be like
+    {
+        group_1 = {
+            name_1 = cb_object_1,
+            name_2 = cb_object_2,
+        },
+        group_2 = {
+            name_3 = cb_object_3,
+            name_4 = cb_object_4,
+        },
+    }
+--]]
+
 local Breaker_factory = {}
 
 function Breaker_factory:new(obj)
@@ -14,37 +27,47 @@ function Breaker_factory:new(obj)
     return obj
 end
 
-function Breaker_factory:remove_circuit_breaker(level, name)
-    local level_not_exists = self:check_level(level)
-    if level_not_exists then
+function Breaker_factory:remove_circuit_breaker(name, group)
+    local group_not_exists = self:check_group(group)
+    if group_not_exists then
         return false
     end
 
-    self[level][name] = nil
+    self[group][name] = nil
     return true
 end
 
-function Breaker_factory:remove_breakers_by_level(level)
-    self[level] = nil
+function Breaker_factory:remove_breakers_by_group(group)
+    self[group] = nil
     return true
 end
 
-function Breaker_factory:get_circuit_breaker(level, name, conf)
-    local level_not_exists = self:check_level(level)
-    if level_not_exists or (conf.version and conf.version > self.version) then
-        self.version = conf.version
-        self[level] = {}
+function Breaker_factory:get_circuit_breaker(name, group, conf)
+    if name == nil or name == "" then
+        return nil, "Cannot get circuit breaker without a name"
+    end
+    
+    if group == nil or group == "" then
+        group = name
     end
 
-    if self[level][name] == nil then
-        self[level][name] = breaker.new(prepare_breaker_settings(conf, name))
+    local group_not_exists = self:check_group(group)
+    if group_not_exists then
+        self[group] = {}
     end
-    return self[level][name], nil
+
+    -- Update CB object if a CB object is requested with new version of settings
+    if self[group][name] == nil or (self[group][name] ~= nil and self[group][name]._version < conf.version) then
+        local settings = utils.prepare_settings(conf)
+        self[group][name] = breaker.new(settings)
+    end
+
+    return self[group][name], nil
 end
 
-function Breaker_factory:check_level(level)
-    if self[level] == nil then
-        return "Trying to access invalid level in circuit breaker factory object: " .. level
+function Breaker_factory:check_group(group)
+    if self[group] == nil then
+        return "Trying to access invalid group in circuit breaker factory object: " .. group
     end
 end
 
