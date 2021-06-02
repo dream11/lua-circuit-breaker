@@ -36,4 +36,10 @@ jobs:
       - name: Test
         run: |
           sudo luarocks make
-          busted test/test.lua
+          busted -c test/test.lua
+          luacov
+
+      - name: Run codecov script
+        run: |
+          wget https://codecov.io/bash
+          bash bash -f "luacov.report.out" -U "-s" -A "-s"
