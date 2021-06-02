@@ -5,7 +5,7 @@
 
 ## Overview
 `lua-circuit-breaker` circuit-breaker functionality like [resilience4j](https://github.com/resilience4j/resilience4j) i.e. for Java.
-Any IO function can be wrapped around this library.
+Any IO function can be wrapped using this library.
 
 ## How does it work?
 
@@ -23,7 +23,9 @@ luarocks install lua-circuit-breaker
 
 ### source
 Clone this repo and run:
-     luarocks make
+```
+luarocks make
+```
 
 
 ## Sample Usage

@@ -1,0 +1,10 @@
+modules = {
+    ["breaker"] = "src/breaker.lua",
+    ["counters"] = "src/counters.lua",
+    ["errors"] = "src/errors.lua",
+    ["factory"] = "src/factory.lua",
+    ["oop"] = "src/oop.lua",
+    ["utils"] = "src/utils.lua",
+}
+
+deletestats = true

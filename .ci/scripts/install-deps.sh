@@ -7,3 +7,4 @@ luarocks --version
 
 sudo luarocks install busted
 sudo luarocks install lua-cjson
+sudo luarocks install luacov

@@ -22,11 +22,11 @@ dependencies = {
 build = {
     type = "builtin",
     modules = {
-        ["lua-circuit-breaker.breaker"] = "breaker.lua",
-        ["lua-circuit-breaker.counters"] = "counters.lua",
-        ["lua-circuit-breaker.errors"] = "errors.lua",
-        ["lua-circuit-breaker.factory"] = "factory.lua",
-        ["lua-circuit-breaker.oop"] = "oop.lua",
-        ["lua-circuit-breaker.utils"] = "utils.lua",
+        ["lua-circuit-breaker.breaker"] = "src/breaker.lua",
+        ["lua-circuit-breaker.counters"] = "src/counters.lua",
+        ["lua-circuit-breaker.errors"] = "src/errors.lua",
+        ["lua-circuit-breaker.factory"] = "src/factory.lua",
+        ["lua-circuit-breaker.oop"] = "src/oop.lua",
+        ["lua-circuit-breaker.utils"] = "src/utils.lua",
     },
 }
