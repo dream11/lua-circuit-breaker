@@ -2,6 +2,7 @@
 
 [![Test](https://github.com/dream11/lua-circuit-breaker/actions/workflows/ci.yml/badge.svg)](https://github.com/dream11/lua-circuit-breaker/actions/workflows/ci.yml)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
+[![codecov](https://codecov.io/gh/dream11/lua-circuit-breaker/branch/master/graph/badge.svg?token=6wyFuRgmdG)](https://codecov.io/gh/dream11/lua-circuit-breaker)
 
 ## Overview
 
