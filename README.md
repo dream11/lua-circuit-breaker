@@ -4,14 +4,14 @@
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 ## Overview
-
-The function of this library is to wrap functions with circuit breaker functionality. It is inspired by [moonbreaker](https://github.com/Invizory/moonbreaker) library.
+`lua-circuit-breaker` circuit-breaker functionality like [resilience4j](https://github.com/resilience4j/resilience4j) i.e. for Java.
+Any IO function can be wrapped around this library.
 
 ## How does it work?
 
 1. The library creates a CB(circuit breaker) object for a function.
-2. Before making the function call, we call CB._before(). This will increment the counter of total_requests by 1.
-3. After the function call ends, we call CB._after(CB._generation, ok). If ok is true, success counter is incremented by 1. Otherwise failure counter gets incremented by 1.
+2. Before making the function call, we call `CB._before()`. This will increment the counter of total_requests by 1.
+3. After the function call ends, we call `CB._after(CB._generation, ok)`. If ok is true, success counter is incremented by 1. Otherwise failure counter gets incremented by 1.
 4. CB object transitions into 3 states: closed, open and half-open based on the settings defined by the user.
 
 ## Installation
@@ -36,7 +36,7 @@ local circuit_breaker_lib = require "lua-circuit-breaker.factory"
 local circuit_breakers = circuit_breaker_lib:new()
 
 -- Get a circuit breaker instance from factory. Returns a new instance only if not already created.
-local settings = {  
+local settings = {
     window_time = 10,
     min_calls_in_window= 20,
     failure_percent_threshold= 51,
@@ -49,19 +49,19 @@ local settings = {
         print(string.format("Breaker %s state changed to: %s", state._state))
     end,
 }
-local cb, err = circuit_breakers:get_circuit_breaker( 
+local cb, err = circuit_breakers:get_circuit_breaker(
     name, -- Name of circuit breaker. This should be unique.
-    group, -- Used to group certain CB objects into one.      
+    group, -- Used to group certain CB objects into one.
     settings,
 )
 
 -- Check state of cb. This function returns an error if the state is open or half_open_max_calls_in_window is breached.
-local _, err_cb = cb:_before() 
+local _, err_cb = cb:_before()
 if err_cb then
     return false, "Circuit breaker open error"
 end
 local generation = cb._generation
- 
+
 -- Make the http call for which circuit breaking is required.
 local res, err_http = makeHttpCall()
 
@@ -93,8 +93,12 @@ cb:_after(generation, ok) -- generation is used to update the counter in the cor
 
 ## Available Methods
 
-1. new() : create a new circuit breaker factory
-2. get_circuit_breaker(name, group, settings) : create a new CB object 
-3. check_group(group) : check if this group is present
-4. remove_breakers_by_group(group) : remove all CB objects in this group
-5. remove_circuit_breaker(name, group) : remove a particular CB inside a group
+1. `new()` : create a new circuit breaker factory
+2. `get_circuit_breaker(name, group, settings)` : create a new CB object
+3. `check_group(group)` : check if this group is present
+4. `remove_breakers_by_group(group)` : remove all CB objects in this group
+5. `remove_circuit_breaker(name, group)` : remove a particular CB inside a group
+
+## Inspired by
+- [moonbreaker](https://github.com/Invizory/moonbreaker)
+- [resilience4j](https://github.com/resilience4j/resilience4j)
