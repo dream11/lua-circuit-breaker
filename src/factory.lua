@@ -1,5 +1,5 @@
-local breaker = require "breaker"
-local utils = require "utils"
+local breaker = require "lua-circuit-breaker.breaker"
+local utils = require "lua-circuit-breaker.utils"
 
 --[[ 
   Structure of Breaker_factory object will be like
