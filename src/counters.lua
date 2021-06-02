@@ -1,4 +1,4 @@
-local oop = require "oop"
+local oop = require "lua-circuit-breaker.oop"
 
 local Counters = oop.class()
 
