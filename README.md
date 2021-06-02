@@ -1,6 +1,7 @@
 ![lua-circuit-breaker](./docs/lua-circuit-breaker.svg)
 
-[![Test](https://github.com/dream11/lua-circuit-breaker/actions/workflows/ci.yml/badge.svg)](https://github.com/dream11/lua-circuit-breaker/actions/workflows/ci.yml)
+[![Continuous Integration](https://github.com/dream11/lua-circuit-breaker/actions/workflows/ci.yml/badge.svg)](https://github.com/dream11/lua-circuit-breaker/actions/workflows/ci.yml)
+[![Code Coverage](https://codecov.io/gh/dream11/lua-circuit-breaker/branch/master/graph/badge.svg?token=6wyFuRgmdG)](https://codecov.io/gh/dream11/lua-circuit-breaker)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 ## Overview

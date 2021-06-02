@@ -1,6 +1,7 @@
 ![lua-circuit-breaker](./lua-circuit-breaker.svg)
 
-[![Test](https://github.com/dream11/lua-circuit-breaker/actions/workflows/ci.yml/badge.svg)](https://github.com/dream11/lua-circuit-breaker/actions/workflows/ci.yml)
+[![Continuous Integration](https://github.com/dream11/lua-circuit-breaker/actions/workflows/ci.yml/badge.svg)](https://github.com/dream11/lua-circuit-breaker/actions/workflows/ci.yml)
+[![Code Coverage](https://codecov.io/gh/dream11/lua-circuit-breaker/branch/master/graph/badge.svg?token=6wyFuRgmdG)](https://codecov.io/gh/dream11/lua-circuit-breaker)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 ## Overview
@@ -36,7 +37,7 @@ local circuit_breaker_lib = require "lua-circuit-breaker.factory"
 local circuit_breakers = circuit_breaker_lib:new()
 
 -- Get a circuit breaker instance from factory. Returns a new instance only if not already created.
-local settings = {  
+local settings = {
     window_time = 10,
     min_calls_in_window= 20,
     failure_percent_threshold= 51,
@@ -49,19 +50,19 @@ local settings = {
         print(string.format("Breaker %s state changed to: %s", state._state))
     end,
 }
-local cb, err = circuit_breakers:get_circuit_breaker( 
+local cb, err = circuit_breakers:get_circuit_breaker(
     name, -- Name of circuit breaker. This should be unique.
-    group, -- Used to group certain CB objects into one.      
+    group, -- Used to group certain CB objects into one.
     settings,
 )
 
 -- Check state of cb. This function returns an error if the state is open or half_open_max_calls_in_window is breached.
-local _, err_cb = cb:_before() 
+local _, err_cb = cb:_before()
 if err_cb then
     return false, "Circuit breaker open error"
 end
 local generation = cb._generation
- 
+
 -- Make the http call for which circuit breaking is required.
 local res, err_http = makeHttpCall()
 
@@ -94,7 +95,7 @@ cb:_after(generation, ok) -- generation is used to update the counter in the cor
 ## Available Methods
 
 1. new() : create a new circuit breaker factory
-2. get_circuit_breaker(name, group, settings) : create a new CB object 
+2. get_circuit_breaker(name, group, settings) : create a new CB object
 3. check_group(group) : check if this group is present
 4. remove_breakers_by_group(group) : remove all CB objects in this group
 5. remove_circuit_breaker(name, group) : remove a particular CB inside a group
