@@ -12,6 +12,9 @@ local utils = require "lua-circuit-breaker.utils"
             name_3 = cb_object_3,
             name_4 = cb_object_4,
         },
+        default_group = {
+            name_with_no_group_1 = cb_object_5,
+        }
     }
 --]]
 
@@ -27,9 +30,24 @@ function Breaker_factory:new(obj)
     return obj
 end
 
+function Breaker_factory:check_group(group)
+    if self[group] == nil then
+        return false
+    end
+    return true
+end
+
 function Breaker_factory:remove_circuit_breaker(name, group)
-    local group_not_exists = self:check_group(group)
-    if group_not_exists then
+    if name == nil or name == "" then
+        return false
+    end
+
+    if group == nil or group == "" then
+        group = "default_group"
+    end
+
+    local group_exists = self:check_group(group)
+    if group_exists == false then
         return false
     end
 
@@ -38,8 +56,17 @@ function Breaker_factory:remove_circuit_breaker(name, group)
 end
 
 function Breaker_factory:remove_breakers_by_group(group)
-    self[group] = nil
-    return true
+    if group == nil or group == "" then
+        return false
+    end
+
+    local group_exists = self:check_group(group)
+    if group_exists then
+        self[group] = nil
+        return true
+    end
+
+    return false
 end
 
 function Breaker_factory:get_circuit_breaker(name, group, conf)
@@ -48,11 +75,11 @@ function Breaker_factory:get_circuit_breaker(name, group, conf)
     end
     
     if group == nil or group == "" then
-        group = name
+        group = "default_group"
     end
 
-    local group_not_exists = self:check_group(group)
-    if group_not_exists then
+    local group_exists = self:check_group(group)
+    if group_exists == false then
         self[group] = {}
     end
 
@@ -66,12 +93,6 @@ function Breaker_factory:get_circuit_breaker(name, group, conf)
     end
 
     return self[group][name], nil
-end
-
-function Breaker_factory:check_group(group)
-    if self[group] == nil then
-        return "Trying to access invalid group in circuit breaker factory object: " .. group
-    end
 end
 
 return Breaker_factory

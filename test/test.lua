@@ -189,5 +189,27 @@ describe(
                 end
             end
         )
+        it(
+            "should remove circuit breaker",
+            function()
+                cb_conf.version = cb_conf.version + 1
+                local cb1 = get_cb("GET/temporary_1", nil, cb_conf)
+                assert.is_not_nil(cb1)
+
+                local cb2 = get_cb("GET/temporary_2", "earth", cb_conf)
+                assert.is_not_nil(cb2)
+
+                local cb3 = get_cb("GET/temporary_1", nil, cb_conf)
+                assert.is_not_nil(cb3)
+
+                assert.are.same(cb1, cb3)
+
+                local delete_1 = circuit_breakers:remove_circuit_breaker("GET/temporary_1", nil)
+                assert.is_true(delete_1)
+
+                local delete_2 = circuit_breakers:remove_breakers_by_group("earth")
+                assert.is_true(delete_2)
+            end
+        )
     end
 )
