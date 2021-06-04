@@ -1,4 +1,4 @@
-![lua-circuit-breaker](./docs/lua-circuit-breaker.svg)
+![lua-circuit-breaker](./lua-circuit-breaker.svg)
 
 [![Continuous Integration](https://github.com/dream11/lua-circuit-breaker/actions/workflows/ci.yml/badge.svg)](https://github.com/dream11/lua-circuit-breaker/actions/workflows/ci.yml)
 [![Code Coverage](https://codecov.io/gh/dream11/lua-circuit-breaker/branch/master/graph/badge.svg?token=6wyFuRgmdG)](https://codecov.io/gh/dream11/lua-circuit-breaker)
@@ -77,7 +77,7 @@ cb:_after(generation, ok) -- generation is used to update the counter in the cor
 ### Parameters
 
 | Parameter | Default  | Type  | Required | Description |
-| --- | --- | --- | --- |
+| --- | --- | --- | --- | --- |
 | `name` | NA | string | true | Name of circuit breaker, this should be unique |
 | `group` | NA | string | false | Group to which the CB object will belong |
 | `settings.version` | NA | number | true | Maintains version of settings object, changing this will create new CB and flush older CB |
