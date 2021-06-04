@@ -57,8 +57,11 @@ function Breaker_factory:get_circuit_breaker(name, group, conf)
     end
 
     -- Update CB object if a CB object is requested with new version of settings
-    if self[group][name] == nil or (self[group][name] ~= nil and self[group][name]._version < conf.version) then
-        local settings = utils.prepare_settings(conf)
+    if self[group][name] == nil or (self[group][name]._version ~= nil and self[group][name]._version < conf.version) then
+        local settings, err = utils.prepare_settings(name, conf)
+        if err then
+            return nil, err
+        end
         self[group][name] = breaker.new(settings)
     end
 

@@ -40,22 +40,22 @@ local circuit_breakers = circuit_breaker_lib:new()
 
 -- Get a circuit breaker instance from factory. Returns a new instance only if not already created.
 local settings = {
-    window_time = 10,
-    min_calls_in_window = 20,
-    failure_percent_threshold = 51,
-    wait_duration_in_open_state = 15,
-    wait_duration_in_half_open_state = 120,
-    half_open_max_calls_in_window = 10,
-    half_open_min_calls_in_window = 5,
     version = 1,
-    notify = function(state)
-        print(string.format("Breaker %s state changed to: %s", state._state))
+    window_time = 10,
+    min_calls_in_window= 20,
+    failure_percent_threshold= 51,
+    wait_duration_in_open_state= 15,
+    wait_duration_in_half_open_state= 120,
+    half_open_max_calls_in_window= 10,
+    half_open_min_calls_in_window= 5,
+    notify = function(name, state)
+        print(string.format("Breaker [ %s ] state changed to [ %s ]", name, state))
     end,
 }
 local cb, err = circuit_breakers:get_circuit_breaker(
-    name, -- Name of circuit breaker. This should be unique.
-    group, -- Used to group certain CB objects into one.
-    settings
+    "io_call_x", -- Name of circuit breaker. This should be unique.
+    "io_calls", -- Used to group certain CB objects into one.
+    settings,
 )
 
 -- Check state of cb. This function returns an error if the state is open or half_open_max_calls_in_window is breached.
@@ -76,22 +76,22 @@ cb:_after(generation, ok) -- generation is used to update the counter in the cor
 
 ### Parameters
 
-| Parameter | Type  | Required | description |
+| Parameter | Default  | Type  | Required | Description |
 | --- | --- | --- | --- |
-| `name` | string | true | Name of circuit breaker, this should be unique |
-| `group` | string | false | Group to which the CB object will belong |
-| `settings.version` | number | true | Maintains version of settings object, changing this will create new CB and flush older CB |
-| `settings.window_time` | number | true | Window size in seconds |
-| `settings.min_calls_in_window` | number | true | Minimum number of calls to be present in the window to start calculation |
-| `settings.failure_percent_threshold` | number | true | % of requests that should fail to open the circuit |
-| `settings.wait_duration_in_open_state` | number | true | Duration to wait in seconds before again transitioning to half-open state |
-| `settings.wait_duration_in_half_open_state` | number | true | Duration to wait in seconds in half-open state before automatically transitioning to closed state |
-| `settings.half_open_max_calls_in_window` | number | true | Maximum calls to allow in half open state |
-| `settings.half_open_min_calls_in_window` | number | true | Minimum number of calls to be present in the half open state to start calculation |
-| `settings.notify` | function | false | Overrides with a custom logger function |
-| `settings.half_open_to_open` | function | false | Overrides transition from half-open to open state |
-| `settings.half_open_to_close` | function | false | Overrides transition from half-open to closed state |
-| `settings.closed_to_open` | function | false | Overrides transition from closed to open state |
+| `name` | NA | string | true | Name of circuit breaker, this should be unique |
+| `group` | NA | string | false | Group to which the CB object will belong |
+| `settings.version` | NA | number | true | Maintains version of settings object, changing this will create new CB and flush older CB |
+| `settings.window_time` | 10 | number | true | Window size in seconds |
+| `settings.min_calls_in_window` | 20 | number | true | Minimum number of calls to be present in the window to start calculation |
+| `settings.failure_percent_threshold` | 51 | number | true | % of requests that should fail to open the circuit |
+| `settings.wait_duration_in_open_state` | 15 | number | true | Duration(sec) to wait before automatically transitioning from open to half-open state |
+| `settings.wait_duration_in_half_open_state` | 120 | number | true | Duration(sec) to wait in half-open state before automatically transitioning to closed state |
+| `settings.half_open_min_calls_in_window` | 5 | number | true | Minimum number of calls to be present in the half open state to start calculation |
+| `settings.half_open_max_calls_in_window` | 10 | number | true | Maximum calls to allow in half open state |
+| `settings.half_open_to_open` | NA | function | false | Overrides transition from half-open to open state |
+| `settings.half_open_to_close` | NA | function | false | Overrides transition from half-open to closed state |
+| `settings.closed_to_open` | NA | function | false | Overrides transtition from closed to open state |
+| `settings.notify` | NA | function | false | Overrides with a custom logger function |
 
 
 ## Available Methods

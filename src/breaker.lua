@@ -2,7 +2,6 @@ local Counters = require "lua-circuit-breaker.counters"
 local errors = require "lua-circuit-breaker.errors"
 local oop = require "lua-circuit-breaker.oop"
 local CircuitBreaker = oop.class()
-local debug_log
 
 local states = {
 	closed = "closed",
@@ -11,11 +10,12 @@ local states = {
 }
 
 function CircuitBreaker:__new(settings) -- luacheck: ignore 561
-	debug_log = settings.notify
 	settings = settings or {}
 	local expiry = (settings.now or os.time)() + settings.interval
 
 	return {
+		_name = settings.name,
+		_version = settings.version,
 		_half_open_max_calls_in_window = settings.half_open_max_calls_in_window,
 		_half_open_timeout = settings.half_open_timeout or 120,
 		_open_timeout = settings.open_timeout or 60,
@@ -36,13 +36,6 @@ function CircuitBreaker:__new(settings) -- luacheck: ignore 561
 				return counters:total_samples() >= settings.half_open_min_calls_in_window and
 					(counters.total_failures / counters:total_samples()) * 100 >= settings.failure_percent_threshold
 			end,
-		_is_successful = settings.is_successful or function(val)
-				return val
-			end,
-		_error = settings.error or function(err)
-				return nil, err
-			end,
-		_rethrow = settings.rethrow or error,
 		_now = settings.now or os.time,
 		_notify = settings.notify,
 		_state = states.closed,
@@ -50,7 +43,6 @@ function CircuitBreaker:__new(settings) -- luacheck: ignore 561
 		_generation = 0,
 		_expiry = expiry,
 		_last_state_notified = true,
-		_version = settings.version,
 	}
 end
 
@@ -95,9 +87,9 @@ function CircuitBreaker:_update_state()
 		self:_next_generation()
 	elseif self._state == states.half_open then
 		self:_set_state(states.closed)
-		debug_log("Transition: Half Open to Closed, timeout")
+		print("Transition: Half Open to Closed due to wait_duration_in_half_open_state, breaker name: ", self._name)
 	else
-		debug_log("Transition: Open to Half Open")
+		print("Transition: Open to Half Open, breaker name: ", self._name)
 		self:_set_state(states.half_open)
 	end
 end
@@ -118,17 +110,17 @@ end
 function CircuitBreaker:_on_failure()
 	self._counters:_on_failure()
 	if self._state == states.closed and self._closed_to_open(self._counters) then
-		debug_log("Transition: Close to Open")
+		print("Transition: Close to Open, breaker name: ", self._name)
 		self:_set_state(states.open)
 	end
 	-- Change state in half-open state when minimum calls in window to calculate % are elapsed
 	if self._state == states.half_open then
 		if self._half_open_to_close(self._counters) then
-			debug_log("Transition: Half Open to Close")
+			print("Transition: Half Open to Close, breaker name: ", self._name)
 			self:_set_state(states.closed)
 		end
 		if self._half_open_to_open(self._counters) then
-			debug_log("Transition: Half Open to Open")
+			print("Transition: Half Open to Open, breaker name: ", self._name)
 			self:_set_state(states.open)
 		end
 	end
@@ -138,7 +130,8 @@ function CircuitBreaker:_set_state(new_state)
 	self._state = new_state
 	self._last_state_notified = false
 	self:_next_generation()
-	self:_notify(new_state, print)
+	local cb_name = self._name
+	self:_notify(cb_name, new_state)
 end
 
 function CircuitBreaker:_next_generation()
