@@ -78,20 +78,20 @@ cb:_after(generation, ok) -- generation is used to update the counter in the cor
 
 | Key | Default  | Type  | Required | Description |
 | --- | --- | --- | --- | --- |
-| `name` | NA | string | true | Name of circuit breaker, this should be unique |
-| `group` | NA | string | false | Group to which the CB object will belong |
-| `settings.version` | NA | number | true | Maintains version of settings object, changing this will create new CB and flush older CB |
-| `settings.window_time` | 10 | number | true | Window size in seconds |
-| `settings.min_calls_in_window` | 20 | number | true | Minimum number of calls to be present in the window to start calculation |
-| `settings.failure_percent_threshold` | 51 | number | true | % of requests that should fail to open the circuit |
-| `settings.wait_duration_in_open_state` | 15 | number | true | Duration(sec) to wait before automatically transitioning from open to half-open state |
-| `settings.wait_duration_in_half_open_state` | 120 | number | true | Duration(sec) to wait in half-open state before automatically transitioning to closed state |
-| `settings.half_open_min_calls_in_window` | 5 | number | true | Minimum number of calls to be present in the half open state to start calculation |
-| `settings.half_open_max_calls_in_window` | 10 | number | true | Maximum calls to allow in half open state |
-| `settings.half_open_to_open` | NA | function | false | Overrides transition from half-open to open state |
-| `settings.half_open_to_close` | NA | function | false | Overrides transition from half-open to closed state |
-| `settings.closed_to_open` | NA | function | false | Overrides transtition from closed to open state |
-| `settings.notify` | NA | function | false | Overrides with a custom logger function |
+| name | NA | string | true | Name of circuit breaker, this should be unique |
+| group | "default_group" | string | false | Group to which the CB object will belong |
+| settings.version | NA | number | true | Maintains version of settings object, changing this will create new CB and flush older CB |
+| settings.window_time | 10 | number | true | Window size in seconds |
+| settings.min_calls_in_window | 20 | number | true | Minimum number of calls to be present in the window to start calculation |
+| settings.failure_percent_threshold | 51 | number | true | % of requests that should fail to open the circuit |
+| settings.wait_duration_in_open_state | 15 | number | true | Duration(sec) to wait before automatically transitioning from open to half-open state |
+| settings.wait_duration_in_half_open_state | 120 | number | true | Duration(sec) to wait in half-open state before automatically transitioning to closed state |
+| settings.half_open_min_calls_in_window | 5 | number | true | Minimum number of calls to be present in the half open state to start calculation |
+| settings.half_open_max_calls_in_window | 10 | number | true | Maximum calls to allow in half open state |
+| settings.half_open_to_open | NA | function | false | Overrides transition from half-open to open state |
+| settings.half_open_to_close | NA | function | false | Overrides transition from half-open to closed state |
+| settings.closed_to_open | NA | function | false | Overrides transtition from closed to open state |
+| settings.notify | NA | function | false | Overrides with a custom logger function |
 
 
 ## Available Methods
@@ -99,8 +99,8 @@ cb:_after(generation, ok) -- generation is used to update the counter in the cor
 1. `new()` : create a new circuit breaker factory
 2. `get_circuit_breaker(name, group, settings)` : create a new CB object
 3. `check_group(group)` : check if this group is present
-4. `remove_breakers_by_group(group)` : remove all CB objects in this group
-5. `remove_circuit_breaker(name, group)` : remove a particular CB inside a group
+4. `remove_breakers_by_group(group)` : remove all CB objects in a group
+5. `remove_circuit_breaker(name, group)` : remove a particular CB inside a group. if group is not passed, "default_group" is assumed.
 
 ## Inspired by
 - [moonbreaker](https://github.com/Invizory/moonbreaker)
