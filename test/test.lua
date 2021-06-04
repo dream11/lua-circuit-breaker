@@ -50,7 +50,6 @@ describe(
                     half_open_min_calls_in_window = half_open_min_calls_in_window,
                     version = 1,
                     now = clock,
-                    notify = print
                 }
             end
         )
