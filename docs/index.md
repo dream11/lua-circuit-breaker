@@ -1,19 +1,19 @@
-![lua-circuit-breaker](./lua-circuit-breaker.svg)
+![lua-circuit-breaker](./docs/lua-circuit-breaker.svg)
 
 [![Continuous Integration](https://github.com/dream11/lua-circuit-breaker/actions/workflows/ci.yml/badge.svg)](https://github.com/dream11/lua-circuit-breaker/actions/workflows/ci.yml)
 [![Code Coverage](https://codecov.io/gh/dream11/lua-circuit-breaker/branch/master/graph/badge.svg?token=6wyFuRgmdG)](https://codecov.io/gh/dream11/lua-circuit-breaker)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 ## Overview
-
-The function of this library is to wrap functions with circuit breaker functionality. It is inspired by [moonbreaker](https://github.com/Invizory/moonbreaker) library.
+`lua-circuit-breaker` provides circuit-breaker functionality like [resilience4j](https://github.com/resilience4j/resilience4j) i.e. for Java.
+<br>Any IO function/method that can fail can be wrapped around `lua-circuit-breaker` and can be made to fail fast, leading to improved resiliency and fault tolerance.
 
 ## How does it work?
 
 1. The library creates a CB(circuit breaker) object for a function.
-2. Before making the function call, we call CB._before(). This will increment the counter of total_requests by 1.
-3. After the function call ends, we call CB._after(CB._generation, ok). If ok is true, success counter is incremented by 1. Otherwise failure counter gets incremented by 1.
-4. CB object transitions into 3 states: closed, open and half-open based on the settings defined by the user.
+2. Before making the function call, we call `CB._before()`. This will increment the counter of total_requests by 1.
+3. After the function call ends, we call `CB._after(CB._generation, ok)`. If ok is true, the success counter is incremented by 1. Otherwise, the failure counter gets incremented by 1.
+4. CB object transitions into three states: closed, open, and half-open based on the settings defined by the user.
 
 ## Installation
 
@@ -24,7 +24,9 @@ luarocks install lua-circuit-breaker
 
 ### source
 Clone this repo and run:
-     luarocks make
+```
+luarocks make
+```
 
 
 ## Sample Usage
@@ -33,18 +35,18 @@ Clone this repo and run:
 --Import Circuit breaker factory.
 local circuit_breaker_lib = require "lua-circuit-breaker.factory"
 
---Create a new instance of the circuit breaker factory. Always set version=0. This is used to flush the circuit breakers when the configuration is changed.
+--Create a new instance of the circuit breaker factory. Always set version = 0. This is used for flushing the circuit breakers when the configuration is changed.
 local circuit_breakers = circuit_breaker_lib:new()
 
 -- Get a circuit breaker instance from factory. Returns a new instance only if not already created.
 local settings = {
     window_time = 10,
-    min_calls_in_window= 20,
-    failure_percent_threshold= 51,
-    wait_duration_in_open_state= 15,
-    wait_duration_in_half_open_state= 120,
-    half_open_max_calls_in_window= 10,
-    half_open_min_calls_in_window= 5,
+    min_calls_in_window = 20,
+    failure_percent_threshold = 51,
+    wait_duration_in_open_state = 15,
+    wait_duration_in_half_open_state = 120,
+    half_open_max_calls_in_window = 10,
+    half_open_min_calls_in_window = 5,
     version = 1,
     notify = function(state)
         print(string.format("Breaker %s state changed to: %s", state._state))
@@ -53,7 +55,7 @@ local settings = {
 local cb, err = circuit_breakers:get_circuit_breaker(
     name, -- Name of circuit breaker. This should be unique.
     group, -- Used to group certain CB objects into one.
-    settings,
+    settings
 )
 
 -- Check state of cb. This function returns an error if the state is open or half_open_max_calls_in_window is breached.
@@ -63,10 +65,10 @@ if err_cb then
 end
 local generation = cb._generation
 
--- Make the http call for which circuit breaking is required.
-local res, err_http = makeHttpCall()
+-- Call IO method for which circuit breaking is required.
+local res, err_http = makeIOCall()
 
--- Update the state of the cb based on successfull / failure response.
+-- Update the state of the cb based on successful / failure response.
 local ok = res and res.status and res.status < 500
 cb:_after(generation, ok) -- generation is used to update the counter in the correct time bucket.
 ```
@@ -87,15 +89,19 @@ cb:_after(generation, ok) -- generation is used to update the counter in the cor
 | `settings.half_open_max_calls_in_window` | number | true | Maximum calls to allow in half open state |
 | `settings.half_open_min_calls_in_window` | number | true | Minimum number of calls to be present in the half open state to start calculation |
 | `settings.notify` | function | false | Overrides with a custom logger function |
-| `settings.half_open_to_open` | function | false | Overrides transtition from half-open to open state |
-| `settings.half_open_to_close` | function | false | Overrides transtition from half-open to closed state |
-| `settings.closed_to_open` | function | false | Overrides transtition from closed to open state |
+| `settings.half_open_to_open` | function | false | Overrides transition from half-open to open state |
+| `settings.half_open_to_close` | function | false | Overrides transition from half-open to closed state |
+| `settings.closed_to_open` | function | false | Overrides transition from closed to open state |
 
 
 ## Available Methods
 
-1. new() : create a new circuit breaker factory
-2. get_circuit_breaker(name, group, settings) : create a new CB object
-3. check_group(group) : check if this group is present
-4. remove_breakers_by_group(group) : remove all CB objects in this group
-5. remove_circuit_breaker(name, group) : remove a particular CB inside a group
+1. `new()` : create a new circuit breaker factory
+2. `get_circuit_breaker(name, group, settings)` : create a new CB object
+3. `check_group(group)` : check if this group is present
+4. `remove_breakers_by_group(group)` : remove all CB objects in this group
+5. `remove_circuit_breaker(name, group)` : remove a particular CB inside a group
+
+## Inspired by
+- [moonbreaker](https://github.com/Invizory/moonbreaker)
+- [resilience4j](https://github.com/resilience4j/resilience4j)
