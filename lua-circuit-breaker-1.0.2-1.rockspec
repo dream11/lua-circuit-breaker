@@ -1,11 +1,11 @@
 package = "lua-circuit-breaker"
 
-version = "1.0.1-1"
+version = "1.0.2-1"
 
 supported_platforms = {"linux", "macosx"}
 source = {
     url = "git://github.com/dream11/lua-circuit-breaker",
-    tag = "v1.0.1"
+    tag = "v1.0.2"
 }
 
 description = {
