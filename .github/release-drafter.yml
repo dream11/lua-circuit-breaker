@@ -1,6 +1,45 @@
+name-template: 'Release v$RESOLVED_VERSION 🌈'
+tag-template: 'v$RESOLVED_VERSION'
 template: |
   ## Changes
   $CHANGES
+
+categories:
+  - title: '🚀 Features'
+    labels:
+      - 'feature'
+  - title: 'Improvements'
+    labels:
+      - 'enhancement'
+  - title: 'Tests'
+    labels:
+      - 'test'
+  - title: '🐛 Bug Fixes'
+    labels:
+      - 'fix'
+      - 'bug'
+      - 'hotfix'
+      - 'revert'
+  - title: '🧰 Maintenance'
+    labels:
+      - 'docs'
+      - 'chore'
+      - 'build'
+      - 'ci'
+
+version-resolver:
+  major:
+    labels:
+      - 'breaking'
+  minor:
+    labels:
+      - 'feature'
+      - 'enhancement'
+  patch:
+    labels:
+      - 'fix'
+      - 'test'
+      - 'hotfix'
 
 exclude-labels:
   - 'skip-changelog'
