@@ -11,7 +11,7 @@
 ## How does it work?
 
 1. The library creates a CB(circuit breaker) object for a function.
-2. Before making the function call, we call `CB._before()`. This will increment the counter of total_requests by 1.
+2. Before making the function call, we call `CB._before()`. This will return an error if the circuit breaker is in open state otherwise will increment the counter of total_requests by 1.
 3. After the function call ends, we call `CB._after(CB._generation, ok)`. If ok is true, the success counter is incremented by 1. Otherwise, the failure counter gets incremented by 1.
 4. CB object transitions into three states: closed, open, and half-open based on the settings defined by the user.
 
@@ -24,7 +24,7 @@ luarocks install lua-circuit-breaker
 
 ### source
 Clone this repo and run:
-```
+```bash
 luarocks make
 ```
 
