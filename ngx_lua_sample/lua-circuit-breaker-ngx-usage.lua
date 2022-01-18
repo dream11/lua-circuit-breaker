@@ -17,6 +17,10 @@ local settings = {
     end,
 }
 
+-- On 10s window_time, after min_calls_in_window 5, check if failure rate is above failure_percent_threshold.
+-- If it is, then change state to open. Wait at least 15s (wait_duration_in_open_state) to try the half_open state.
+-- In half_open state wait 120s or min 2 to max 5 requests.
+
 sample_lua_module.get_circuit_breaker = function(name, group)
   local cb, _ = circuit_breakers:get_circuit_breaker(
       name, -- Name of circuit breaker. This should be unique.
