@@ -73,6 +73,9 @@ local ok = res and res.status and res.status < 500
 cb:_after(generation, ok) -- generation is used to update the counter in the correct time bucket.
 ```
 
+## Openresty Sample Usage
+
+There is a sample nginx openresty application (using docker for ease of usage) on [`ngx_lua_sample`](ngx_lua_sample/README.md)
 
 ### Parameters
 
