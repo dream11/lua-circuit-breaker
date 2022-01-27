@@ -1,0 +1,13 @@
+version: '2.1'
+
+services:
+  nginx:
+    build:
+      context: .
+    volumes:
+      - "./nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf"
+      - "./lua-circuit-breaker-ngx-usage.lua:/lua/src/lua-circuit-breaker-ngx-usage.lua"
+    ports:
+      - "8080:8080"
+      - "9090:9090"
+
