@@ -12,8 +12,8 @@ local settings = {
     wait_duration_in_half_open_state= 120,
     half_open_max_calls_in_window= 5,
     half_open_min_calls_in_window= 2,
-    notify = function(name, state)
-      ngx.log(ngx.ERR,string.format("Breaker [ %s ] state changed to [ %s ]", name, state))
+    notify = function(state, name)
+      ngx.log(ngx.ERR,string.format("Breaker [ %s ] state changed to [ %s ]", name, state._state))
     end,
 }
 
